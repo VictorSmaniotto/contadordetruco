@@ -1,4 +1,4 @@
-import 'package:contadordetruco/home_page.dart';
+import 'home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

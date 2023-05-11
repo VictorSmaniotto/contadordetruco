@@ -1,4 +1,6 @@
-import 'package:contadordetruco/vitoria_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'vitoria_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +17,33 @@ class _HomePageState extends State<HomePage> {
   int _vitoriaNos = 0;
   String _grupoAtual = '';
   int _pontoAtual = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    carregarDados();
+  }
+
+  Future<void> salvarDados() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('placarNos', _placarNos);
+    prefs.setInt('vitoriaNos', _vitoriaNos);
+    prefs.setInt('placarEles', _placarEles);
+    prefs.setInt('vitoriaEles', _vitoriaEles);
+    debugPrint('salvar dados');
+  }
+
+  Future<void> carregarDados() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _placarNos = prefs.getInt('placarNos') ?? 0;
+      _vitoriaNos = prefs.getInt('vitoriaNos') ?? 0;
+      _placarEles = prefs.getInt('placarEles') ?? 0;
+      _vitoriaEles = prefs.getInt('vitoriaEles') ?? 0;
+    });
+
+    debugPrint('carregar dados');
+  }
 
   void aumentarPontos(String grupo, int pontos) {
     _grupoAtual = grupo;
@@ -69,6 +98,7 @@ class _HomePageState extends State<HomePage> {
 
       debugPrint(_placarEles.toString());
     }
+    salvarDados();
   }
 
   void novaPartida() {
@@ -76,6 +106,7 @@ class _HomePageState extends State<HomePage> {
       _placarNos = 0;
       _placarEles = 0;
     });
+    salvarDados();
   }
 
   void novoTorneio() {
@@ -85,6 +116,7 @@ class _HomePageState extends State<HomePage> {
       _placarEles = 0;
       _vitoriaEles = 0;
     });
+    salvarDados();
   }
 
   void diminuirPontos(String grupo) {
@@ -92,6 +124,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _placarNos--;
       });
+      salvarDados();
     }
 
     // if (grupo == 'NOS') {
@@ -106,6 +139,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _placarEles--;
       });
+      salvarDados();
     }
 
     // if (grupo == 'ELES') {
@@ -123,6 +157,7 @@ class _HomePageState extends State<HomePage> {
         _placarNos -= _pontoAtual;
         _vitoriaNos--;
       });
+      salvarDados();
     }
 
     if (_grupoAtual == 'ELES') {
@@ -131,6 +166,7 @@ class _HomePageState extends State<HomePage> {
         _vitoriaEles--;
       });
     }
+    salvarDados();
   }
 
   @override
